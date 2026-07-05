@@ -74,6 +74,15 @@ The network predicts
 along with a background class.
 
 The architecture consists of
+<div align="center">
+
+## End-to-End Pipeline
+
+<img src="assets/pipeline.png" width="950"/>
+
+</div>
+
+The pipeline above summarizes the complete inference workflow implemented in this project—from raw input video to final annotated swing prediction and extracted event frames.
 
 ```
 Video
@@ -361,6 +370,7 @@ making the training process reproducible and stable.
 ---
 
 ## 4. End-to-End Inference Pipeline
+The implementation follows the inference pipeline illustrated earlier in this README, combining preprocessing, CNN feature extraction, temporal sequence modeling, confidence estimation, event localization, and automatic video generation into a single executable workflow.
 
 A completely new inference pipeline was implemented.
 
@@ -408,38 +418,17 @@ are automatically exported as JPEG images for further analysis.
 
 # Model Architecture
 
-```
-Input Video
+<div align="center">
 
-↓
+<img src="assets/architecture.png" width="900"/>
 
-160 × 160 Frames
+</div>
 
-↓
+The architecture combines a lightweight MobileNetV2 backbone for efficient spatial feature extraction with a Bidirectional LSTM for temporal modeling across consecutive video frames.
 
-MobileNetV2 Backbone
+Each frame is independently encoded into a compact feature vector before being passed through the recurrent network, allowing the model to leverage both past and future context when identifying swing events.
 
-↓
-
-Feature Sequence
-
-↓
-
-Bidirectional LSTM
-
-↓
-
-Fully Connected Layer
-
-↓
-
-9-Class Prediction
-
-↓
-
-8 Swing Events + Background
-```
-
+The final fully-connected classifier predicts one of nine classes (8 swing events + background) for every frame.
 ---
 
 # Results

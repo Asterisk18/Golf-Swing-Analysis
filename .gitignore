@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual Environments
+venv/
+venv_ml/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Dataset (Large Files)
+data/videos_160/
+data/golfDB.mat
+data/golfDB.pkl
+data/yolo_dataset
+videos_160.zip
+
+
+# Training Checkpoints
+checkpoints/latest.pt
+
+# Pretrained Model Weights
+# (Downloaded separately)
+models/mobilenet_v2.pth.tar
+
+# YOLO
+runs/
+yolo26n.pt
+yolov8n.pt
+scripts/yolov8n.pt
+
+# Generated Results
+results/event_frames
+
+# Experimental / Temporary Files
+raw.txt
+project.pdf
+temp.py
+
+# Local Dataset Configs (Optional)
+dataset.yaml
+dataset_pseudo.yaml
+
+scripts

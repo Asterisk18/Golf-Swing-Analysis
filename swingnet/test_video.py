@@ -102,7 +102,7 @@ def load_model():
     )
 
     model = EventDetector(
-        pretrain=True,
+        pretrain=False,
         width_mult=1.0,
         lstm_layers=1,
         lstm_hidden=256,

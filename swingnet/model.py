@@ -16,13 +16,14 @@ class EventDetector(nn.Module):
 
         net = MobileNetV2(width_mult=width_mult)
         
-        # laoding pretrained imageNet weights
-        state_dict_mobilenet = torch.load(
-            MODEL_DIR / "mobilenet_v2.pth.tar",
-            map_location="cpu"
-        )
 
         if pretrain:
+            
+            # laoding pretrained imageNet weights
+            state_dict_mobilenet = torch.load(
+                MODEL_DIR / "mobilenet_v2.pth.tar",
+                map_location="cpu"
+            )
             net.load_state_dict(state_dict_mobilenet) # loading imageNet weights into MobileNet
 
         # CNN for extracting features

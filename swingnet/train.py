@@ -6,16 +6,13 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from tqdm import tqdm
 
-from .configs import *
-from .model import EventDetector
-from .dataloader import GolfDB, ToTensor, Normalize, VideoAugmentation
-from .eval import eval
+from configs import *
+from model import EventDetector
+from dataloader import GolfDB, ToTensor, Normalize, VideoAugmentation
+from eval import eval
 
 
-# -------------------------------------------------
 # Dataset
-# -------------------------------------------------
-
 transform = transforms.Compose([
     VideoAugmentation(),
     ToTensor(),
@@ -43,10 +40,7 @@ train_loader = DataLoader(
 )
 
 
-# -------------------------------------------------
 # Model
-# -------------------------------------------------
-
 device = torch.device(DEVICE)
 
 model = EventDetector(
@@ -67,10 +61,7 @@ print(f"Batches/epoch: {len(train_loader)}")
 
 
 
-# -------------------------------------------------
 # Freeze CNN for first few epochs
-# -------------------------------------------------
-
 for i, layer in enumerate(model.cnn):
     if i < 10:
         for param in layer.parameters():
@@ -79,10 +70,7 @@ for i, layer in enumerate(model.cnn):
 # print(f"Frozen CNN for first {FREEZE_EPOCHS} epochs")
 
 
-# -------------------------------------------------
 # Loss
-# -------------------------------------------------
-
 weights = torch.tensor(
     [
         1/8,
@@ -101,10 +89,7 @@ weights = torch.tensor(
 criterion = nn.CrossEntropyLoss(weight=weights)
 
 
-# -------------------------------------------------
 # Optimizer
-# -------------------------------------------------
-
 optimizer = torch.optim.AdamW(
     filter(lambda p: p.requires_grad, model.parameters()),
     lr=LEARNING_RATE,
@@ -120,10 +105,7 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
 scaler = torch.amp.GradScaler("cuda")
 
 
-# -------------------------------------------------
 # Checkpoints
-# -------------------------------------------------
-
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 
 best_pce = 0.0
@@ -131,10 +113,7 @@ patience = 10
 patience_counter = 0
 
 
-# -------------------------------------------------
 # Training Loop
-# -------------------------------------------------
-
 for epoch in range(EPOCHS):
 
     torch.cuda.reset_peak_memory_stats()
@@ -154,21 +133,15 @@ for epoch in range(EPOCHS):
         labels = sample["labels"].to(device)
 
         labels = labels.view(-1)
-
         optimizer.zero_grad()
 
         with torch.amp.autocast("cuda"):
-
             logits = model(images)
-
             loss = criterion(logits, labels)
 
         scaler.scale(loss).backward()
-
         scaler.step(optimizer)
-
         scaler.update()
-
         running_loss += loss.item()
 
         progress.set_postfix(
@@ -177,11 +150,8 @@ for epoch in range(EPOCHS):
         )
 
     scheduler.step()
-
     avg_loss = running_loss / len(train_loader)
-
     print("\nRunning validation...")
-
     model.eval()
 
     with torch.no_grad():
@@ -203,8 +173,6 @@ for epoch in range(EPOCHS):
         f"GPU Memory : {torch.cuda.max_memory_allocated()/1024**3:.2f} GB"
     )
 
-    # ---------------------------------------
-
     # save the latest weights
     torch.save(
         {
@@ -217,9 +185,7 @@ for epoch in range(EPOCHS):
     )
 
     if pce > best_pce:
-
         best_pce = pce
-
         patience_counter = 0
 
         torch.save(
@@ -235,19 +201,12 @@ for epoch in range(EPOCHS):
         print("Saved Best Model")
 
     else:
-
         patience_counter += 1
-
-        print(
-            f"No improvement ({patience_counter}/{patience})"
-        )
+        print(f"No improvement ({patience_counter}/{patience})")
 
     if patience_counter >= patience:
-
         print("\nEarly stopping!")
-
         break
-
 
 print("\nTraining Finished")
 print(f"Best Validation PCE = {best_pce:.4f}")

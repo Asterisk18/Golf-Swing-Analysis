@@ -166,9 +166,7 @@ def main():
     print("\nLoaded model.")
 
     for sample in loader:
-
         images = sample["images"]
-
         probs = predict_video(
             model,
             images,
@@ -227,10 +225,7 @@ def main():
         if not ret:
             break
 
-        # --------------------------------------------------
         # Find current swing phase
-        # --------------------------------------------------
-
         current_event = EVENT_NAMES[-1]
         current_conf = confidences[-1]
 
@@ -242,10 +237,7 @@ def main():
                 current_conf = confidences[i]
                 break
 
-        # --------------------------------------------------
         # Save exact event frame once
-        # --------------------------------------------------
-
         for i, ef in enumerate(event_frames):
 
             if frame_idx == ef and not saved_events[i]:
@@ -257,10 +249,7 @@ def main():
 
                 saved_events[i] = True
                 
-        # --------------------------------------------------
         # Draw overlay (compact)
-        # --------------------------------------------------
-
         overlay = frame.copy()
 
         # Smaller background box
@@ -329,7 +318,6 @@ def main():
         )
 
         writer.write(frame)
-
         frame_idx += 1
 
     writer.release()
